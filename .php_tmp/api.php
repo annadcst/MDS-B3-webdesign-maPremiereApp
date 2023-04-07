@@ -7,14 +7,17 @@
   <title>Cat's API</title>
 </head>
 <body>
+
 <?php
+
+define('CAT_API_KEY', 'live_brzQjpPeQjZ1ZHaB0W56Ski9hdBPByg0o0WtG5SloheUb2P6i2xwzyftP2cKhQ4x');
 
 // preparation de l'appel d'API
 $curl = curl_init();
 
 //parametrage de l'appel d'API
 curl_setopt_array($curl, array(
-  CURLOPT_URL => 'https://api.thecatapi.com/v1/images/search',
+  CURLOPT_URL => 'https://api.thecatapi.com/v1/images/search?has_breeds=1',
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => '',
   CURLOPT_MAXREDIRS => 10,
@@ -23,6 +26,14 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => 'GET',
 ));
+
+// on ajoute la clef d'API optenue sur le site cat's API
+// cela permet d'avoir plus de fonctionnalites sur cette API
+$headers = [
+  'x-api-key: ' . CAT_API_KEY
+];
+// on ajoute l'inforamation dans les headers de l'appel d'API
+curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
 // on execute l'appel d'API
 $response = curl_exec($curl);
@@ -37,11 +48,19 @@ $cat = $responseJson[0];
 // on extrait l'url de l'image du chat
 $imgUrl = $cat->url;
 // DEBUG : afficher le contenu d'une variable
-// var_dump($cat->url);
+$breed = $cat->breeds[0];
+//echo '<pre>';
+//print_r($cat);
+//echo '</pre>';
 
 ?>
 
-<img src="<?php echo $imgUrl ?>"/>
+<h1><?php echo $breed->name; ?></h1>
+<p><?php echo $breed->description ?></p>
+<p><i>Caractère : <?php echo $breed->temperament ?></i></p>
+<p>Origine : <?php echo $breed->origin ?></p>
+
+<img src="<?php echo $imgUrl ?>" width="400"/>
 
 </body>
 </html>
